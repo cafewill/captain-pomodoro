@@ -191,7 +191,7 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python -c "from PySide6.QtWidgets import QAp
 
 ## 빌드
 
-빌드 스크립트는 프로젝트 내부 `.venv`가 있으면 우선 사용합니다. PyInstaller 캐시도 프로젝트 내부 `.pyinstaller-cache/`를 사용하도록 설정했습니다.
+빌드 스크립트는 프로젝트 내부 `.venv`가 있으면 우선 사용합니다. PyInstaller 캐시도 프로젝트 내부 `.pyinstaller-cache/`를 사용하도록 설정했습니다. macOS 빌드는 `PomodoroPlus.spec`를 기준으로 재현합니다.
 
 macOS:
 
@@ -219,7 +219,15 @@ dist/
 └── PomodoroPlus/
 ```
 
-macOS 빌드는 현재 환경에서 성공 확인했습니다.
+macOS 빌드는 현재 환경에서 성공 확인했습니다. 빌드된 앱에는 아래 리소스가 포함됩니다.
+
+```text
+dist/PomodoroPlus.app/Contents/Resources/pomodoro_plus/assets/app.png
+dist/PomodoroPlus.app/Contents/Resources/pomodoro_plus/assets/focus/focus-tomato-laptop.png
+dist/PomodoroPlus.app/Contents/Resources/pomodoro_plus/assets/break/break-tomato-tea.png
+```
+
+`scripts/build_macos.sh`는 `assets/app.png`에서 `app_icon.icns` 생성을 시도합니다. 현재 환경에서는 `iconutil`이 생성된 iconset을 거부해 기본 번들 아이콘으로 fallback되지만, 앱 내부 트레이/화면 리소스는 정상 포함됩니다.
 
 ## 애니메이션 리소스 확장
 
@@ -313,11 +321,14 @@ src/pomodoro_plus/assets/break/
 - 통계 창에 오늘, 최근 7일, 최근 30일 요약 추가
 - 앱/트레이 아이콘과 집중/휴식 기본 PNG 캐릭터 리소스 추가
 - PNG/GIF/APNG/WebP 리소스가 패키지에 포함되도록 `pyproject.toml` 설정 업데이트
+- `PomodoroPlus.spec`를 git 추적 대상으로 전환해 macOS PyInstaller 빌드 재현성 개선
+- macOS 재빌드 및 앱 산출물 내 기본 PNG 리소스 포함 확인
 
 ## 다음 작업 추천
 
-1. 실제 캐릭터 GIF/APNG 리소스 추가
+1. macOS 번들 아이콘용 `.icns` 생성 방식 개선
 2. 알림음 사용자 지정 파일 선택 기능
-3. 주간/월간 통계 그래프와 상세 히스토리 화면
-4. Windows 빌드 검증
-5. Linux 빌드 검증
+3. 실제 캐릭터 GIF/APNG 리소스 추가
+4. 주간/월간 통계 그래프와 상세 히스토리 화면
+5. Windows 빌드 검증
+6. Linux 빌드 검증
