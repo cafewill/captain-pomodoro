@@ -2,6 +2,20 @@
 
 `포모도로+`는 화면 우측 하단에 작게 띄워두고 쓰는 데스크톱 포모도로 시간관리 앱입니다. 오늘 바로 사용할 수 있는 macOS MVP를 먼저 완성하고, 같은 코드베이스에서 Windows/Linux 빌드로 확장할 수 있도록 구성했습니다.
 
+## 포모도로 시간관리법
+
+포모도로 기법은 이탈리아의 프란체스코 시릴로(Francesco Cirillo)가 1980년대 후반 대학생 시절 고안한 시간관리법입니다. 주방용 토마토 모양 타이머를 사용한 데서 `Pomodoro`라는 이름이 붙었습니다.
+
+기본 개념:
+
+- 하나의 작업을 정하고 방해 요소를 줄입니다.
+- 보통 25분 동안 한 작업에 집중합니다.
+- 집중 시간이 끝나면 5분 정도 짧게 쉽니다.
+- 이 집중/휴식 단위를 반복하고, 몇 번 반복한 뒤에는 더 긴 휴식을 갖습니다.
+- 핵심은 오래 버티는 것이 아니라 짧은 집중 단위를 꾸준히 반복해 작업 리듬과 회복 시간을 함께 관리하는 것입니다.
+
+`포모도로+`는 이 개념을 바탕으로 집중/휴식 시간을 설정하고, 작게 띄워둔 타이머로 흐름을 바로 확인할 수 있게 만든 앱입니다.
+
 ## 프로젝트 목표
 
 - 실행 시 우측 하단에 작은 플로팅 타이머 표시
@@ -86,6 +100,7 @@ captain-pomodoro/
 │       ├── app.py
 │       ├── timer.py
 │       ├── settings.py
+│       ├── stats.py
 │       ├── assets.py
 │       ├── ui/
 │       │   ├── main_window.py
@@ -95,7 +110,8 @@ captain-pomodoro/
 │           └── break/
 └── tests/
     ├── test_timer.py
-    └── test_settings.py
+    ├── test_settings.py
+    └── test_stats.py
 ```
 
 핵심 파일:
@@ -105,6 +121,7 @@ captain-pomodoro/
 - `src/pomodoro_plus/ui/settings_dialog.py`: 설정창
 - `src/pomodoro_plus/timer.py`: UI와 분리된 타이머 엔진
 - `src/pomodoro_plus/settings.py`: 설정 저장/로드/검증
+- `src/pomodoro_plus/stats.py`: 일별 집중/휴식 통계 저장
 - `src/pomodoro_plus/assets.py`: 집중/휴식 랜덤 애니메이션 슬롯
 
 ## 개발 환경 준비
@@ -157,7 +174,7 @@ CLI 형태로 실행하려면:
 현재 검증 결과:
 
 ```text
-5 passed
+7 passed
 ```
 
 추가로 Qt 메인 창 초기화도 확인했습니다.
@@ -244,8 +261,17 @@ src/pomodoro_plus/assets/break/
 - `break_label`
 - `break_minutes`
 - `always_on_top`
+- `auto_cycle`
+- `notification_sound`
 
 파일이 없거나 깨져 있으면 기본값으로 복구됩니다.
+
+통계는 같은 사용자 설정 경로에 `stats.json`으로 저장됩니다.
+
+저장 항목:
+
+- 날짜별 집중 완료 횟수와 누적 분
+- 날짜별 휴식 완료 횟수와 누적 분
 
 ## 진행 내역
 
@@ -257,18 +283,27 @@ src/pomodoro_plus/assets/break/
 - 타이머 엔진 구현
 - 설정 저장/검증 구현
 - 집중/휴식 랜덤 애니메이션 슬롯 구현
-- 테스트 추가
+- 일별 집중/휴식 통계 저장 구현
+- 시스템 트레이 메뉴, 트레이 최소화, 종료 알림, 알림음, 자동 사이클 구현
+- 테스트 추가 및 `7 passed` 확인
 - macOS 빌드 스크립트 작성
 - Windows/Linux 빌드 스크립트 초안 작성
 - macOS 빌드 성공
 - 빌드된 앱 실행 확인
+- git 저장소 문제로 기존 `.git` 이력을 제거한 뒤 새 저장소로 재초기화
+- `sync: initial commit.` 커밋 생성 후 `https://github.com/cafewill/captain-pomodoro.git`의 `main` 브랜치로 push
+- 로컬 `main`과 `origin/main`이 `17ee899` 커밋에서 일치하는 것 확인
+
+2026-05-17:
+
+- 로컬 git reflog, 원격 설정, 터미널 히스토리, 원격 브랜치를 확인해 저장소 재생성 흐름 정리
+- 현재 원격 저장소에는 새 initial commit 기준 이력만 남아 있음을 확인
+- README에 포모도로 시간관리법의 창시자와 핵심 개념 추가
 
 ## 다음 작업 추천
 
 1. 실제 캐릭터 GIF/APNG 리소스 적용
-2. 시스템 트레이 최소화 지원
-3. 타이머 종료 알림음/알림창 개선
-4. 집중 완료 후 휴식 전환 자동화 옵션
-5. 하루 집중 횟수와 누적 집중 시간 저장
-6. Windows 빌드 검증
-7. Linux 빌드 검증
+2. 알림음 사용자 지정 파일 선택 기능
+3. 주간/월간 통계 히스토리 화면
+4. Windows 빌드 검증
+5. Linux 빌드 검증
