@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pomodoro-plus"
+version = "0.1.0"
+description = "Small floating Pomodoro timer desktop app"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "platformdirs>=4.2",
+  "PySide6>=6.7",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2",
+  "pyinstaller>=6.7",
+]
+
+[project.scripts]
+pomodoro-plus = "pomodoro_plus.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pomodoro_plus = ["assets/focus/.gitkeep", "assets/break/.gitkeep"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

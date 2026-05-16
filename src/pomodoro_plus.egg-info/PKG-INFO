@@ -1,0 +1,81 @@
+Metadata-Version: 2.4
+Name: pomodoro-plus
+Version: 0.1.0
+Summary: Small floating Pomodoro timer desktop app
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: platformdirs>=4.2
+Requires-Dist: PySide6>=6.7
+Provides-Extra: dev
+Requires-Dist: pytest>=8.2; extra == "dev"
+Requires-Dist: pyinstaller>=6.7; extra == "dev"
+
+# 포모도로+
+
+작은 플로팅 데스크톱 포모도로 타이머입니다. 실행하면 화면 우측 하단에 표시되고, 집중/휴식 시간을 설정해서 사용할 수 있습니다.
+
+## 목표
+
+- Python 3.12+ 기반
+- macOS, Windows, Linux 실행 파일 빌드 가능 구조
+- PySide6 GUI
+- 집중/휴식 타이머 시작, 중단, 재시작
+- 항상 위 표시 옵션
+- 집중/휴식 명칭과 시간 설정 저장
+- 집중/휴식별 랜덤 캐릭터 애니메이션 슬롯
+
+## 개발 실행
+
+```bash
+python3.12 -m venv .venv
+. .venv/bin/activate
+python -m pip install -e ".[dev]"
+pomodoro-plus
+```
+
+`python3.12`가 없다면 Python 3.12 이상 인터프리터로 대체할 수 있습니다.
+
+## 테스트
+
+```bash
+pytest
+```
+
+## 빌드
+
+macOS:
+
+```bash
+./scripts/build_macos.sh
+```
+
+Windows PowerShell:
+
+```powershell
+.\scripts\build_windows.ps1
+```
+
+Linux:
+
+```bash
+./scripts/build_linux.sh
+```
+
+빌드 결과물은 `dist/` 아래에 생성됩니다.
+
+## 설정 기본값
+
+- 집중 명칭: 업무
+- 집중 시간: 25분
+- 휴식 명칭: 휴식
+- 휴식 시간: 5분
+- 항상 위 표시: 꺼짐
+
+설정 범위:
+
+- 집중 시간: 10분 ~ 60분
+- 휴식 시간: 5분 ~ 20분
+
+## 애니메이션 리소스
+
+현재 MVP는 내장 이모지 애니메이션 슬롯으로 동작합니다. 이후 `src/pomodoro_plus/assets/focus/`, `src/pomodoro_plus/assets/break/`에 GIF/APNG 리소스를 추가하면 실제 캐릭터 애니메이션으로 확장할 수 있습니다.
