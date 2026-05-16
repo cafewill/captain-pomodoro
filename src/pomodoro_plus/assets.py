@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass
+from pathlib import Path
 
 from pomodoro_plus.timer import TimerMode
 
@@ -41,6 +42,26 @@ BREAK_SLOTS = [
     AnimationSlot("🌤️", "창밖 보기"),
     AnimationSlot("😌", "기분 전환"),
 ]
+
+IMAGE_SUFFIXES = {".gif", ".png", ".apng", ".jpg", ".jpeg", ".webp"}
+
+
+def assets_dir() -> Path:
+    return Path(__file__).resolve().parent / "assets"
+
+
+def app_icon_path() -> Path:
+    return assets_dir() / "app.png"
+
+
+def random_animation_path(mode: TimerMode) -> Path | None:
+    directory = assets_dir() / ("focus" if mode == TimerMode.FOCUS else "break")
+    if not directory.exists():
+        return None
+    candidates = [path for path in directory.iterdir() if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES]
+    if not candidates:
+        return None
+    return random.choice(candidates)
 
 
 def random_slot(mode: TimerMode) -> AnimationSlot:

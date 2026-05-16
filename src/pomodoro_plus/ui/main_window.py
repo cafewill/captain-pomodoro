@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QMenu,
     QPushButton,
+    QStyle,
     QSystemTrayIcon,
     QVBoxLayout,
     QWidget,
@@ -21,7 +22,7 @@ from PySide6.QtWidgets import (
 
 from pomodoro_plus.assets import app_icon_path, random_animation_path, random_slot
 from pomodoro_plus.settings import AppSettings, load_settings, save_settings
-from pomodoro_plus.stats import record_completion, today_stats
+from pomodoro_plus.stats import period_stats, record_completion, today_stats
 from pomodoro_plus.timer import PomodoroTimer, TimerMode, TimerState, format_seconds
 from pomodoro_plus.ui.settings_dialog import SettingsDialog
 
@@ -78,7 +79,7 @@ class MainWindow(QWidget):
         self.stats_button = QPushButton("📊")
         self.stats_button.setObjectName("iconButton")
         self.stats_button.setFixedSize(26, 26)
-        self.stats_button.setToolTip("오늘 통계")
+        self.stats_button.setToolTip("통계")
         self.stats_button.clicked.connect(self._show_stats)
 
         self.settings_button = QPushButton("⚙")
@@ -187,7 +188,8 @@ class MainWindow(QWidget):
         self._apply_style()
 
     def _build_tray(self) -> None:
-        icon = QIcon(str(app_icon_path()))
+        icon_path = app_icon_path()
+        icon = QIcon(str(icon_path)) if icon_path.exists() else self.style().standardIcon(QStyle.SP_ComputerIcon)
         self.tray = QSystemTrayIcon(icon, self)
         self.tray.setToolTip("포모도로+")
 
@@ -201,7 +203,7 @@ class MainWindow(QWidget):
         self._tray_pause_action.triggered.connect(self._pause)
         menu.addAction("재시작").triggered.connect(self._reset)
         menu.addSeparator()
-        menu.addAction("오늘 통계").triggered.connect(self._show_stats)
+        menu.addAction("통계").triggered.connect(self._show_stats)
         menu.addSeparator()
         menu.addAction("종료").triggered.connect(self._quit)
 
@@ -506,25 +508,20 @@ class MainWindow(QWidget):
     # ------------------------------------------------------------------
 
     def _show_stats(self) -> None:
-        s = today_stats()
         dialog = QDialog(self)
-        dialog.setWindowTitle("오늘 통계")
+        dialog.setWindowTitle("통계")
         dialog.setModal(True)
-        dialog.setMinimumWidth(240)
+        dialog.setMinimumWidth(280)
         layout = QVBoxLayout(dialog)
         layout.setSpacing(10)
 
-        layout.addWidget(QLabel("<b>📊 오늘 집중 현황</b>"))
-        for label, value in [
-            ("집중 횟수", f"{s['focus_count']}회"),
-            ("집중 시간", f"{s['focus_minutes']}분"),
-            ("휴식 횟수", f"{s['break_count']}회"),
-            ("휴식 시간", f"{s['break_minutes']}분"),
-            ("총 기록 시간", f"{s['focus_minutes'] + s['break_minutes']}분"),
+        layout.addWidget(QLabel("<b>📊 집중 현황</b>"))
+        for title, stats in [
+            ("오늘", today_stats()),
+            ("최근 7일", period_stats(7)),
+            ("최근 30일", period_stats(30)),
         ]:
-            row = QLabel(f"<b>{label}</b>  {value}")
-            row.setAlignment(Qt.AlignLeft)
-            layout.addWidget(row)
+            layout.addWidget(_stats_summary_label(title, stats))
 
         buttons = QDialogButtonBox(QDialogButtonBox.Close)
         buttons.rejected.connect(dialog.reject)
@@ -663,3 +660,17 @@ def _play_sound() -> None:
             winsound.MessageBeep(winsound.MB_OK)
     except Exception:
         QApplication.beep()
+
+
+def _stats_summary_label(title: str, stats: dict) -> QLabel:
+    total = stats["focus_minutes"] + stats["break_minutes"]
+    label = QLabel(
+        f"<b>{title}</b><br>"
+        f"집중 {stats['focus_count']}회 · {stats['focus_minutes']}분<br>"
+        f"휴식 {stats['break_count']}회 · {stats['break_minutes']}분<br>"
+        f"총 기록 {total}분"
+    )
+    label.setAlignment(Qt.AlignLeft)
+    label.setTextFormat(Qt.RichText)
+    label.setMinimumHeight(72)
+    return label

@@ -36,9 +36,9 @@
 ## GitHub 협업 변수
 
 ```text
-REPO={프로젝트명}
+REPO=captain-pomodoro
 NS={git 작업을 실행하는 삼순이: claude | chatgpt | gemini}
-TOOL={프로젝트 또는 작업 도메인}
+TOOL=pomodoro
 LABEL={작업자 또는 목적 구분값, 선택}
 BRANCHTS={브랜치 생성 시점의 KST 타임스탬프}
 ```
