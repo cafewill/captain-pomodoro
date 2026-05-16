@@ -26,7 +26,17 @@ pomodoro-plus = "pomodoro_plus.__main__:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-pomodoro_plus = ["assets/focus/.gitkeep", "assets/break/.gitkeep"]
+pomodoro_plus = [
+  "assets/app.png",
+  "assets/focus/*.png",
+  "assets/focus/*.gif",
+  "assets/focus/*.apng",
+  "assets/focus/*.webp",
+  "assets/break/*.png",
+  "assets/break/*.gif",
+  "assets/break/*.apng",
+  "assets/break/*.webp",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

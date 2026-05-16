@@ -35,6 +35,8 @@ MVP 구현 완료:
 - 설정값 JSON 저장
 - 항상 위 표시 옵션
 - 집중/휴식별 랜덤 이모지 애니메이션 슬롯 12개씩
+- 앱/트레이용 토마토 타이머 아이콘
+- 집중/휴식 기본 PNG 캐릭터 리소스
 - macOS PyInstaller 빌드 성공
 - 테스트 코드 작성 및 통과
 
@@ -51,7 +53,7 @@ MVP 구현 완료:
 
 아직 추가 고도화 대상:
 
-- 실제 GIF/APNG 캐릭터 애니메이션 적용 (현재 PNG 정적 이미지)
+- 실제 GIF/APNG 캐릭터 애니메이션 추가
 - 알림음 사용자 지정 (WAV/MP3 파일 선택)
 - 주간/월간 통계 그래프와 상세 히스토리
 - Windows/Linux 실제 빌드 검증
@@ -103,6 +105,7 @@ captain-pomodoro/
 │       │   ├── main_window.py
 │       │   └── settings_dialog.py
 │       └── assets/
+│           ├── app.png
 │           ├── focus/
 │           └── break/
 └── tests/
@@ -171,7 +174,7 @@ CLI 형태로 실행하려면:
 현재 검증 결과:
 
 ```text
-7 passed
+11 passed
 ```
 
 추가로 Qt 메인 창 초기화도 확인했습니다.
@@ -183,7 +186,7 @@ QT_QPA_PLATFORM=offscreen .venv/bin/python -c "from PySide6.QtWidgets import QAp
 확인된 출력:
 
 ```text
-포모도로+ 260 330
+포모도로+ 260 340
 ```
 
 ## 빌드
@@ -220,7 +223,7 @@ macOS 빌드는 현재 환경에서 성공 확인했습니다.
 
 ## 애니메이션 리소스 확장
 
-현재 MVP는 코드에 내장된 이모지 슬롯으로 동작합니다.
+현재 앱은 기본 PNG 캐릭터 리소스를 먼저 사용하고, 파일이 없으면 코드에 내장된 이모지 슬롯으로 대체합니다.
 
 집중 슬롯 예:
 
@@ -238,14 +241,22 @@ macOS 빌드는 현재 환경에서 성공 확인했습니다.
 - 노래 듣기
 - 커피 한잔
 
-이후 실제 GIF/APNG 파일을 추가할 위치:
+기본 리소스:
+
+```text
+src/pomodoro_plus/assets/app.png
+src/pomodoro_plus/assets/focus/focus-tomato-laptop.png
+src/pomodoro_plus/assets/break/break-tomato-tea.png
+```
+
+추가 PNG/GIF/APNG/WebP 파일을 넣을 위치:
 
 ```text
 src/pomodoro_plus/assets/focus/
 src/pomodoro_plus/assets/break/
 ```
 
-다음 단계에서는 이 폴더의 리소스를 자동 탐색해서 `QMovie`로 재생하도록 바꾸면 됩니다.
+이 폴더의 리소스는 자동 탐색되며, GIF는 `QMovie`로 재생됩니다.
 
 ## 설정 저장
 
@@ -300,10 +311,12 @@ src/pomodoro_plus/assets/break/
 - README에 포모도로 시간관리법의 창시자와 핵심 개념 추가
 - `src/pomodoro_plus.egg-info/` 빌드 산출물을 git 추적에서 제거하고 `.gitignore`에 `*.egg-info/` 추가
 - 통계 창에 오늘, 최근 7일, 최근 30일 요약 추가
+- 앱/트레이 아이콘과 집중/휴식 기본 PNG 캐릭터 리소스 추가
+- PNG/GIF/APNG/WebP 리소스가 패키지에 포함되도록 `pyproject.toml` 설정 업데이트
 
 ## 다음 작업 추천
 
-1. 실제 캐릭터 GIF/APNG 리소스 적용
+1. 실제 캐릭터 GIF/APNG 리소스 추가
 2. 알림음 사용자 지정 파일 선택 기능
 3. 주간/월간 통계 그래프와 상세 히스토리 화면
 4. Windows 빌드 검증
