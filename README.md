@@ -46,6 +46,7 @@ MVP 구현 완료:
 - 트레이로 최소화 (✕) 버튼 — 백그라운드 유지
 - 타이머 종료 OS 네이티브 알림 (트레이 말풍선)
 - 타이머 종료 알림음 (macOS: afplay, Linux: paplay, Windows: winsound)
+- 설정창에서 알림음 사용 여부와 사용자 지정 알림음 파일 선택 가능
 - 자동 집중/휴식 사이클 (설정에서 활성화)
 - 일별 집중/휴식 횟수·시간 통계 (📊 버튼)
 - 최근 7일/30일 통계 요약
@@ -54,7 +55,6 @@ MVP 구현 완료:
 아직 추가 고도화 대상:
 
 - 실제 GIF/APNG 캐릭터 애니메이션 추가
-- 알림음 사용자 지정 (WAV/MP3 파일 선택)
 - 주간/월간 통계 그래프와 상세 히스토리
 - Windows/Linux 실제 빌드 검증
 
@@ -279,8 +279,11 @@ src/pomodoro_plus/assets/break/
 - `always_on_top`
 - `auto_cycle`
 - `notification_sound`
+- `notification_sound_path`
 
 파일이 없거나 깨져 있으면 기본값으로 복구됩니다.
+
+알림음은 설정창에서 켜고 끌 수 있으며, WAV/MP3/M4A/AIFF/OGG 계열 파일을 사용자 지정 경로로 선택할 수 있습니다. 사용자 지정 파일이 없거나 재생에 실패하면 OS별 기본 알림음으로 대체됩니다.
 
 통계는 같은 사용자 설정 경로에 `stats.json`으로 저장됩니다.
 
@@ -323,12 +326,12 @@ src/pomodoro_plus/assets/break/
 - PNG/GIF/APNG/WebP 리소스가 패키지에 포함되도록 `pyproject.toml` 설정 업데이트
 - `PomodoroPlus.spec`를 git 추적 대상으로 전환해 macOS PyInstaller 빌드 재현성 개선
 - macOS 재빌드 및 앱 산출물 내 기본 PNG 리소스 포함 확인
+- 설정창에서 알림음 사용 여부와 사용자 지정 알림음 파일 경로 관리 기능 추가
 
 ## 다음 작업 추천
 
 1. macOS 번들 아이콘용 `.icns` 생성 방식 개선
-2. 알림음 사용자 지정 파일 선택 기능
-3. 실제 캐릭터 GIF/APNG 리소스 추가
-4. 주간/월간 통계 그래프와 상세 히스토리 화면
-5. Windows 빌드 검증
-6. Linux 빌드 검증
+2. 실제 캐릭터 GIF/APNG 리소스 추가
+3. 주간/월간 통계 그래프와 상세 히스토리 화면
+4. Windows 빌드 검증
+5. Linux 빌드 검증

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
+from pathlib import Path
 
 from PySide6.QtCore import QSize, QTimer, Qt
 from PySide6.QtGui import QFont, QIcon, QMovie, QPixmap
@@ -464,7 +465,7 @@ class MainWindow(QWidget):
         record_completion(mode.value, minutes)
         self._notify_done(mode)
         if self.settings.notification_sound:
-            _play_sound()
+            _play_sound(self.settings.notification_sound_path)
         if self.settings.auto_cycle:
             self.timer.toggle_mode()
             self._select_random_animation()
@@ -641,7 +642,31 @@ class MainWindow(QWidget):
 # Platform sound helper
 # ------------------------------------------------------------------
 
-def _play_sound() -> None:
+def _play_sound(sound_path: str = "") -> None:
+    custom_path = Path(sound_path).expanduser() if sound_path else None
+    if custom_path is not None and custom_path.is_file():
+        try:
+            if sys.platform == "darwin":
+                subprocess.Popen(
+                    ["afplay", str(custom_path)],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                return
+            if sys.platform.startswith("linux"):
+                subprocess.Popen(
+                    ["paplay", str(custom_path)],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                return
+
+            import winsound  # type: ignore[import]
+            winsound.PlaySound(str(custom_path), winsound.SND_FILENAME | winsound.SND_ASYNC)
+            return
+        except Exception:
+            pass
+
     try:
         if sys.platform == "darwin":
             subprocess.Popen(
