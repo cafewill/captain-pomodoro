@@ -27,6 +27,7 @@ class AppSettings:
     always_on_top: bool = False
     auto_cycle: bool = False
     notification_sound: bool = True
+    notification_sound_path: str = ""
 
 
 def default_settings_path() -> Path:
@@ -80,6 +81,7 @@ def validate_settings(data: dict[str, Any]) -> AppSettings:
         always_on_top=bool(data.get("always_on_top", defaults.always_on_top)),
         auto_cycle=bool(data.get("auto_cycle", defaults.auto_cycle)),
         notification_sound=bool(data.get("notification_sound", defaults.notification_sound)),
+        notification_sound_path=_clean_path(data.get("notification_sound_path")),
     )
 
 
@@ -98,3 +100,9 @@ def _bounded_int(value: object, fallback: int, minimum: int, maximum: int) -> in
     except (TypeError, ValueError):
         return fallback
     return max(minimum, min(maximum, number))
+
+
+def _clean_path(value: object) -> str:
+    if not isinstance(value, str):
+        return ""
+    return value.strip()

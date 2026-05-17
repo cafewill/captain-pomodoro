@@ -11,6 +11,9 @@ def test_validate_settings_clamps_ranges() -> None:
             "break_label": "  커피 타임  ",
             "break_minutes": 1,
             "always_on_top": True,
+            "auto_cycle": True,
+            "notification_sound": False,
+            "notification_sound_path": "  /tmp/done.wav  ",
         }
     )
 
@@ -19,6 +22,9 @@ def test_validate_settings_clamps_ranges() -> None:
     assert settings.break_label == "커피 타임"
     assert settings.break_minutes == 5
     assert settings.always_on_top is True
+    assert settings.auto_cycle is True
+    assert settings.notification_sound is False
+    assert settings.notification_sound_path == "/tmp/done.wav"
 
 
 def test_save_and_load_settings(tmp_path: Path) -> None:
@@ -29,6 +35,9 @@ def test_save_and_load_settings(tmp_path: Path) -> None:
         break_label="산책",
         break_minutes=10,
         always_on_top=True,
+        auto_cycle=True,
+        notification_sound=False,
+        notification_sound_path="/tmp/custom.mp3",
     )
 
     save_settings(original, path)
